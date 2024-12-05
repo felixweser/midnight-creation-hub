@@ -31,15 +31,27 @@ const data = [
 
 export default function Portfolio() {
   const [funds, setFunds] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchFunds = async () => {
-      const { data: fundsData, error } = await supabase
-        .from("funds")
-        .select("*");
-      
-      if (!error && fundsData) {
-        setFunds(fundsData);
+      try {
+        const { data: fundsData, error } = await supabase
+          .from("funds")
+          .select("*");
+        
+        if (error) {
+          console.error("Error fetching funds:", error);
+          return;
+        }
+
+        if (fundsData) {
+          setFunds(fundsData);
+        }
+      } catch (error) {
+        console.error("Error fetching funds:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -128,40 +140,46 @@ export default function Portfolio() {
           <CardTitle>Active Funds</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Fund Name</TableHead>
-                <TableHead>Vintage Year</TableHead>
-                <TableHead>Fund Size</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {funds.map((fund) => (
-                <TableRow key={fund.fund_id}>
-                  <TableCell className="font-medium">{fund.name}</TableCell>
-                  <TableCell>{fund.vintage_year}</TableCell>
-                  <TableCell>${fund.fund_size?.toLocaleString()}</TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ring-green-600/20 bg-green-50/10 text-green-400">
-                      {fund.status}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <a
-                      href={`/dashboard/funds/${fund.fund_id}`}
-                      className="inline-flex items-center text-primary hover:text-primary/80"
-                    >
-                      View Details
-                      <ArrowUpRight className="ml-1 h-4 w-4" />
-                    </a>
-                  </TableCell>
+          {isLoading ? (
+            <div className="flex justify-center items-center h-32">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Fund Name</TableHead>
+                  <TableHead>Vintage Year</TableHead>
+                  <TableHead>Fund Size</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {funds.map((fund) => (
+                  <TableRow key={fund.fund_id}>
+                    <TableCell className="font-medium">{fund.name}</TableCell>
+                    <TableCell>{fund.vintage_year}</TableCell>
+                    <TableCell>${fund.fund_size?.toLocaleString()}</TableCell>
+                    <TableCell>
+                      <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ring-green-600/20 bg-green-50/10 text-green-400">
+                        {fund.status}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <a
+                        href={`/dashboard/funds/${fund.fund_id}`}
+                        className="inline-flex items-center text-primary hover:text-primary/80"
+                      >
+                        View Details
+                        <ArrowUpRight className="ml-1 h-4 w-4" />
+                      </a>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
     </div>
