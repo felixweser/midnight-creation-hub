@@ -31,6 +31,7 @@ export default function Portfolio() {
     averageTVPI: 0,
     tvpiChange: 0
   });
+  const [chartData, setChartData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -91,11 +92,19 @@ export default function Portfolio() {
           setMetrics({
             totalAUM: currentAUM,
             aumChange,
-            averageIRR: 0, // These would need proper calculation based on investment data
-            irrChange: 0,  // These would need proper calculation based on investment data
-            averageTVPI: 0, // These would need proper calculation based on investment data
-            tvpiChange: 0   // These would need proper calculation based on investment data
+            averageIRR: 0,
+            irrChange: 0,
+            averageTVPI: 0,
+            tvpiChange: 0
           });
+
+          // Prepare chart data
+          const chartData = Object.entries(metricsByDate).map(([date, metrics]) => ({
+            month: new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+            value: metrics.reduce((sum, m) => sum + (m.post_money_valuation || 0), 0)
+          }));
+
+          setChartData(chartData);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -122,7 +131,7 @@ export default function Portfolio() {
         <CardContent>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data}>
+              <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
