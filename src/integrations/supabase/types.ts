@@ -9,6 +9,56 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      company_metrics_history: {
+        Row: {
+          arr: number | null
+          burn_rate: number | null
+          company_id: string | null
+          created_at: string
+          id: string
+          metric_date: string
+          mrr: number | null
+          post_money_valuation: number | null
+          runway_months: number | null
+          shares_owned: number | null
+          updated_at: string
+        }
+        Insert: {
+          arr?: number | null
+          burn_rate?: number | null
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          metric_date: string
+          mrr?: number | null
+          post_money_valuation?: number | null
+          runway_months?: number | null
+          shares_owned?: number | null
+          updated_at?: string
+        }
+        Update: {
+          arr?: number | null
+          burn_rate?: number | null
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          metric_date?: string
+          mrr?: number | null
+          post_money_valuation?: number | null
+          runway_months?: number | null
+          shares_owned?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_metrics_history_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "portfolio_companies"
+            referencedColumns: ["company_id"]
+          },
+        ]
+      }
       files: {
         Row: {
           created_at: string
@@ -123,6 +173,44 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      investor_updates: {
+        Row: {
+          attachment_path: string | null
+          company_id: string | null
+          content: string | null
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          attachment_path?: string | null
+          company_id?: string | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          attachment_path?: string | null
+          company_id?: string | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investor_updates_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "portfolio_companies"
+            referencedColumns: ["company_id"]
           },
         ]
       }

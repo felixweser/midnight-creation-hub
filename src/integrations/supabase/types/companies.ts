@@ -25,3 +25,27 @@ export type PortfolioCompanyInsert = Omit<PortfolioCompany, 'company_id' | 'crea
 }
 
 export type PortfolioCompanyUpdate = Partial<PortfolioCompanyInsert>
+
+export type CompanyMetricsHistory = {
+  id: string
+  company_id: string
+  metric_date: string
+  post_money_valuation: number | null
+  shares_owned: number | null
+  arr: number | null
+  mrr: number | null
+  burn_rate: number | null
+  runway_months: number | null
+  created_at: string
+  updated_at: string
+}
+
+export type InvestorUpdate = {
+  id: string
+  company_id: string
+  title: string
+  content: string | null
+  attachment_path: string | null
+  created_at: string
+  updated_at: string
+}
