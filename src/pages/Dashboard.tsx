@@ -7,6 +7,7 @@ import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import Portfolio from "./dashboard/Portfolio";
 import Companies from "./dashboard/Companies";
+import CompanyDashboard from "./dashboard/CompanyDashboard";
 import Team from "./dashboard/Team";
 import Documents from "./dashboard/Documents";
 
@@ -84,6 +85,7 @@ export default function Dashboard() {
             <Route index element={<DashboardHome />} />
             <Route path="portfolio" element={<Portfolio />} />
             <Route path="companies" element={<Companies />} />
+            <Route path="companies/:companyId" element={<CompanyDashboard />} />
             <Route path="team" element={<Team />} />
             <Route path="documents" element={<Documents />} />
           </Routes>

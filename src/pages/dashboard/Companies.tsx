@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -21,6 +22,7 @@ import {
 import { CreateCompanyForm } from "@/components/companies/CreateCompanyForm";
 
 export default function Companies() {
+  const navigate = useNavigate();
   const [companies, setCompanies] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -100,14 +102,18 @@ export default function Companies() {
                   <TableRow key={company.company_id}>
                     <TableCell className="font-medium">{company.name}</TableCell>
                     <TableCell>{company.industry}</TableCell>
-                    <TableCell>{new Date(company.founding_date).getFullYear()}</TableCell>
+                    <TableCell>{company.founding_date ? new Date(company.founding_date).getFullYear() : 'N/A'}</TableCell>
                     <TableCell>
                       <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ring-green-600/20 bg-green-50/10 text-green-400">
-                        {company.status}
+                        {company.status || 'Active'}
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => navigate(`/dashboard/companies/${company.company_id}`)}
+                      >
                         View Details
                       </Button>
                     </TableCell>
