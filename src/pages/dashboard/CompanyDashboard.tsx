@@ -140,7 +140,7 @@ export default function CompanyDashboard() {
           isEditing={isEditing}
           onDescriptionChange={(value) => handleInputChange("metadata.description", value)}
         />
-        <CompanyMetrics company={company} />
+        <CompanyMetrics company={company} isEditing={isEditing} />
       </div>
     </div>
   );
