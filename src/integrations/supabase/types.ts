@@ -9,7 +9,198 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      fund_users: {
+        Row: {
+          created_at: string
+          fund_id: string
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          fund_id: string
+          role: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          fund_id?: string
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fund_users_fund_id_fkey"
+            columns: ["fund_id"]
+            isOneToOne: false
+            referencedRelation: "funds"
+            referencedColumns: ["fund_id"]
+          },
+        ]
+      }
+      funds: {
+        Row: {
+          created_at: string
+          fund_id: string
+          fund_size: number | null
+          name: string
+          organization_id: string
+          status: string | null
+          updated_at: string
+          vintage_year: number
+        }
+        Insert: {
+          created_at?: string
+          fund_id?: string
+          fund_size?: number | null
+          name: string
+          organization_id: string
+          status?: string | null
+          updated_at?: string
+          vintage_year: number
+        }
+        Update: {
+          created_at?: string
+          fund_id?: string
+          fund_size?: number | null
+          name?: string
+          organization_id?: string
+          status?: string | null
+          updated_at?: string
+          vintage_year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funds_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      organization_users: {
+        Row: {
+          created_at: string
+          organization_id: string
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          organization_id: string
+          role: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          organization_id?: string
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_users_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          metadata: Json | null
+          name: string
+          organization_id: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          metadata?: Json | null
+          name: string
+          organization_id?: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          metadata?: Json | null
+          name?: string
+          organization_id?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      portfolio_companies: {
+        Row: {
+          company_id: string
+          created_at: string
+          founding_date: string | null
+          industry: string | null
+          metadata: Json | null
+          name: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_id?: string
+          created_at?: string
+          founding_date?: string | null
+          industry?: string | null
+          metadata?: Json | null
+          name: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          founding_date?: string | null
+          industry?: string | null
+          metadata?: Json | null
+          name?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id: string
+          role: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          role?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
