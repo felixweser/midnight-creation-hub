@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowUpRight, TrendingUp, TrendingDown } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -19,23 +19,17 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { formatCurrency } from "@/lib/utils";
-
-const data = [
-  { month: "Jan", value: 1000000 },
-  { month: "Feb", value: 1200000 },
-  { month: "Mar", value: 1100000 },
-  { month: "Apr", value: 1400000 },
-  { month: "May", value: 1600000 },
-  { month: "Jun", value: 1800000 },
-];
+import { MetricsOverview } from "@/components/portfolio/MetricsOverview";
 
 export default function Portfolio() {
   const [funds, setFunds] = useState<any[]>([]);
   const [metrics, setMetrics] = useState({
     totalAUM: 0,
+    aumChange: 0,
     averageIRR: 0,
-    averageTVPI: 0
+    irrChange: 0,
+    averageTVPI: 0,
+    tvpiChange: 0
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -52,11 +46,11 @@ export default function Portfolio() {
           return;
         }
 
-        // Fetch latest metrics for all companies
+        // Fetch metrics history for calculations
         const { data: metricsData, error: metricsError } = await supabase
           .from("company_metrics_history")
           .select("*")
-          .order('metric_date', { ascending: false });
+          .order('metric_date', { ascending: true });
 
         if (metricsError) {
           console.error("Error fetching metrics:", metricsError);
@@ -67,17 +61,40 @@ export default function Portfolio() {
           setFunds(fundsData);
         }
 
-        if (metricsData) {
-          // Calculate total AUM from post_money_valuation
-          const totalAUM = metricsData.reduce((sum, metric) => 
-            sum + (metric.post_money_valuation || 0), 0);
+        if (metricsData && metricsData.length > 0) {
+          // Group metrics by date to calculate totals
+          const metricsByDate = metricsData.reduce((acc, metric) => {
+            const date = metric.metric_date;
+            if (!acc[date]) {
+              acc[date] = [];
+            }
+            acc[date].push(metric);
+            return acc;
+          }, {} as Record<string, typeof metricsData>);
 
-          // For now, we'll use placeholder calculations for IRR and TVPI
-          // In a real scenario, these would be calculated based on investment data
+          // Sort dates to get current and previous period
+          const dates = Object.keys(metricsByDate).sort();
+          const currentDate = dates[dates.length - 1];
+          const previousDate = dates[dates.length - 2] || currentDate;
+
+          // Calculate current period metrics
+          const currentMetrics = metricsByDate[currentDate];
+          const currentAUM = currentMetrics.reduce((sum, m) => sum + (m.post_money_valuation || 0), 0);
+          
+          // Calculate previous period metrics
+          const previousMetrics = metricsByDate[previousDate];
+          const previousAUM = previousMetrics.reduce((sum, m) => sum + (m.post_money_valuation || 0), 0);
+
+          // Calculate percentage changes
+          const aumChange = previousAUM ? ((currentAUM - previousAUM) / previousAUM) * 100 : 0;
+
           setMetrics({
-            totalAUM,
-            averageIRR: 24.3, // This should be calculated based on actual returns
-            averageTVPI: 2.4   // This should be calculated based on actual returns
+            totalAUM: currentAUM,
+            aumChange,
+            averageIRR: 0, // These would need proper calculation based on investment data
+            irrChange: 0,  // These would need proper calculation based on investment data
+            averageTVPI: 0, // These would need proper calculation based on investment data
+            tvpiChange: 0   // These would need proper calculation based on investment data
           });
         }
       } catch (error) {
@@ -96,54 +113,7 @@ export default function Portfolio() {
         <h2 className="text-3xl font-bold">Portfolio Performance</h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Total AUM</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <p className="text-2xl font-semibold">
-                {formatCurrency(metrics.totalAUM)}
-              </p>
-              <div className="flex items-center text-green-500">
-                <TrendingUp className="h-4 w-4 mr-1" />
-                <span>+12.5%</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>IRR</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <p className="text-2xl font-semibold">{metrics.averageIRR}%</p>
-              <div className="flex items-center text-green-500">
-                <TrendingUp className="h-4 w-4 mr-1" />
-                <span>+2.1%</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>TVPI</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <p className="text-2xl font-semibold">{metrics.averageTVPI}x</p>
-              <div className="flex items-center text-red-500">
-                <TrendingDown className="h-4 w-4 mr-1" />
-                <span>-0.1x</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <MetricsOverview metrics={metrics} />
 
       <Card className="mt-8">
         <CardHeader>
