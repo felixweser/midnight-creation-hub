@@ -7,6 +7,7 @@ import { formatCurrency } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
+import React, { useState } from 'react'; // Added React and useState import
 
 interface CompanyMetricsProps {
   company: PortfolioCompany;
