@@ -19,6 +19,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { formatCurrency } from "@/lib/utils";
 
 const data = [
   { month: "Jan", value: 1000000 },
@@ -31,31 +32,62 @@ const data = [
 
 export default function Portfolio() {
   const [funds, setFunds] = useState<any[]>([]);
+  const [metrics, setMetrics] = useState({
+    totalAUM: 0,
+    averageIRR: 0,
+    averageTVPI: 0
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchFunds = async () => {
+    const fetchData = async () => {
       try {
-        const { data: fundsData, error } = await supabase
+        // Fetch funds
+        const { data: fundsData, error: fundsError } = await supabase
           .from("funds")
           .select("*");
         
-        if (error) {
-          console.error("Error fetching funds:", error);
+        if (fundsError) {
+          console.error("Error fetching funds:", fundsError);
+          return;
+        }
+
+        // Fetch latest metrics for all companies
+        const { data: metricsData, error: metricsError } = await supabase
+          .from("company_metrics_history")
+          .select("*")
+          .order('metric_date', { ascending: false });
+
+        if (metricsError) {
+          console.error("Error fetching metrics:", metricsError);
           return;
         }
 
         if (fundsData) {
           setFunds(fundsData);
         }
+
+        if (metricsData) {
+          // Calculate total AUM from post_money_valuation
+          const totalAUM = metricsData.reduce((sum, metric) => 
+            sum + (metric.post_money_valuation || 0), 0);
+
+          // For now, we'll use placeholder calculations for IRR and TVPI
+          // In a real scenario, these would be calculated based on investment data
+          setMetrics({
+            totalAUM,
+            averageIRR: 24.3, // This should be calculated based on actual returns
+            averageTVPI: 2.4   // This should be calculated based on actual returns
+          });
+        }
       } catch (error) {
-        console.error("Error fetching funds:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchFunds();
+    fetchData();
   }, []);
 
   return (
@@ -71,7 +103,9 @@ export default function Portfolio() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <p className="text-2xl font-semibold">$18.5M</p>
+              <p className="text-2xl font-semibold">
+                {formatCurrency(metrics.totalAUM)}
+              </p>
               <div className="flex items-center text-green-500">
                 <TrendingUp className="h-4 w-4 mr-1" />
                 <span>+12.5%</span>
@@ -86,7 +120,7 @@ export default function Portfolio() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <p className="text-2xl font-semibold">24.3%</p>
+              <p className="text-2xl font-semibold">{metrics.averageIRR}%</p>
               <div className="flex items-center text-green-500">
                 <TrendingUp className="h-4 w-4 mr-1" />
                 <span>+2.1%</span>
@@ -101,7 +135,7 @@ export default function Portfolio() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <p className="text-2xl font-semibold">2.4x</p>
+              <p className="text-2xl font-semibold">{metrics.averageTVPI}x</p>
               <div className="flex items-center text-red-500">
                 <TrendingDown className="h-4 w-4 mr-1" />
                 <span>-0.1x</span>
