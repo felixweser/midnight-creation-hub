@@ -29,7 +29,7 @@
     --destructive-foreground: 0 0% 98%;
     
     --border: 240 4% 16%;
-    --input: 240 4% 16%;
+    --input: 0 0% 100%; /* Changed to white */
     --ring: 252 80% 74%;
     
     --radius: 0.5rem;
