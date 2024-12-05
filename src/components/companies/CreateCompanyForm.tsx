@@ -20,7 +20,7 @@ const formSchema = z.object({
   name: z.string().min(1, "Company name is required"),
   industry: z.string().min(1, "Industry is required"),
   foundingDate: z.string().min(1, "Founding date is required"),
-  teamSize: z.string().transform((val) => (val ? parseInt(val, 10) : null)),
+  teamSize: z.number().min(1, "Team size must be at least 1").or(z.string().transform(val => (val ? parseInt(val, 10) : 0))),
   performance: z.string().optional(),
   description: z.string().optional(),
 });
@@ -35,7 +35,7 @@ export function CreateCompanyForm({ onSuccess }: { onSuccess: () => void }) {
       name: "",
       industry: "",
       foundingDate: "",
-      teamSize: "",
+      teamSize: 0,
       performance: "",
       description: "",
     },
@@ -49,7 +49,7 @@ export function CreateCompanyForm({ onSuccess }: { onSuccess: () => void }) {
         founding_date: values.foundingDate,
         status: "Active",
         metadata: {
-          team_size: values.teamSize,
+          team_size: Number(values.teamSize),
           performance: values.performance || null,
           description: values.description || null,
           metrics: {},
@@ -129,7 +129,8 @@ export function CreateCompanyForm({ onSuccess }: { onSuccess: () => void }) {
                 <Input 
                   type="number" 
                   placeholder="Enter team size" 
-                  {...field} 
+                  {...field}
+                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
                 />
               </FormControl>
               <FormMessage />

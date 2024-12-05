@@ -4,12 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CalendarDays, Users, Building2, Activity, Edit2, Check, X } from "lucide-react";
-import type { PortfolioCompany } from "@/integrations/supabase/types/companies";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { CompanyOverview } from "@/components/companies/CompanyOverview";
+import { CompanyMetrics } from "@/components/companies/CompanyMetrics";
+import type { PortfolioCompany } from "@/integrations/supabase/types/companies";
 
 export default function CompanyDashboard() {
   const { companyId } = useParams();
@@ -60,8 +61,15 @@ export default function CompanyDashboard() {
   });
 
   const handleEdit = () => {
-    setEditedData(company || {});
-    setIsEditing(true);
+    if (company) {
+      setEditedData({
+        name: company.name,
+        industry: company.industry,
+        founding_date: company.founding_date,
+        metadata: { ...company.metadata }
+      });
+      setIsEditing(true);
+    }
   };
 
   const handleSave = () => {
@@ -79,7 +87,7 @@ export default function CompanyDashboard() {
       setEditedData(prev => ({
         ...prev,
         [parent]: {
-          ...prev[parent as keyof PortfolioCompany],
+          ...((prev as any)?.[parent] || {}),
           [child]: value
         }
       }));
@@ -224,43 +232,12 @@ export default function CompanyDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Company Overview</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isEditing ? (
-              <Textarea
-                value={editedData.metadata?.description || ""}
-                onChange={(e) => handleInputChange("metadata.description", e.target.value)}
-                className="min-h-[150px]"
-              />
-            ) : (
-              <p className="text-muted-foreground">
-                {company.metadata?.description || "No description available."}
-              </p>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Key Metrics</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {Object.entries(company.metadata?.metrics || {}).map(([key, value]) => (
-                <div key={key} className="flex justify-between items-center">
-                  <span className="text-sm font-medium">{key}</span>
-                  <span className="text-sm text-muted-foreground">{value}</span>
-                </div>
-              ))}
-              {(!company.metadata?.metrics || Object.keys(company.metadata?.metrics).length === 0) && (
-                <p className="text-muted-foreground">No metrics available.</p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        <CompanyOverview 
+          company={company} 
+          isEditing={isEditing}
+          onDescriptionChange={(value) => handleInputChange("metadata.description", value)}
+        />
+        <CompanyMetrics company={company} />
       </div>
     </div>
   );
