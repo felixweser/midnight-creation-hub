@@ -1,15 +1,13 @@
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CalendarDays, Users, Building2, Activity, Edit2, Check, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { CompanyOverview } from "@/components/companies/CompanyOverview";
 import { CompanyMetrics } from "@/components/companies/CompanyMetrics";
+import { CompanyHeader } from "@/components/companies/CompanyHeader";
+import { CompanyStats } from "@/components/companies/CompanyStats";
 import type { PortfolioCompany } from "@/integrations/supabase/types/companies";
 
 export default function CompanyDashboard() {
@@ -119,117 +117,22 @@ export default function CompanyDashboard() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">
-          {isEditing ? (
-            <Input
-              value={editedData.name || ""}
-              onChange={(e) => handleInputChange("name", e.target.value)}
-              className="text-3xl font-bold h-12"
-            />
-          ) : (
-            company.name
-          )}
-        </h1>
-        <div className="flex gap-2">
-          {isEditing ? (
-            <>
-              <Button onClick={handleSave} variant="default" size="sm">
-                <Check className="h-4 w-4 mr-1" /> Save
-              </Button>
-              <Button onClick={handleCancel} variant="outline" size="sm">
-                <X className="h-4 w-4 mr-1" /> Cancel
-              </Button>
-            </>
-          ) : (
-            <Button onClick={handleEdit} variant="outline" size="sm">
-              <Edit2 className="h-4 w-4 mr-1" /> Edit
-            </Button>
-          )}
-        </div>
-      </div>
+      <CompanyHeader
+        name={company.name}
+        isEditing={isEditing}
+        editedName={editedData.name || ""}
+        onEdit={handleEdit}
+        onSave={handleSave}
+        onCancel={handleCancel}
+        onNameChange={(value) => handleInputChange("name", value)}
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Founded</CardTitle>
-            <CalendarDays className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isEditing ? (
-                <Input
-                  type="date"
-                  value={editedData.founding_date || ""}
-                  onChange={(e) => handleInputChange("founding_date", e.target.value)}
-                />
-              ) : (
-                company.founding_date
-                  ? new Date(company.founding_date).getFullYear()
-                  : "N/A"
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Industry</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isEditing ? (
-                <Input
-                  value={editedData.industry || ""}
-                  onChange={(e) => handleInputChange("industry", e.target.value)}
-                />
-              ) : (
-                company.industry || "N/A"
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Team Size</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isEditing ? (
-                <Input
-                  type="number"
-                  value={editedData.metadata?.team_size || ""}
-                  onChange={(e) => handleInputChange("metadata.team_size", parseInt(e.target.value))}
-                />
-              ) : (
-                company.metadata?.team_size || "N/A"
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Performance</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isEditing ? (
-                <Input
-                  value={editedData.metadata?.performance || ""}
-                  onChange={(e) => handleInputChange("metadata.performance", e.target.value)}
-                />
-              ) : (
-                company.metadata?.performance || "N/A"
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <CompanyStats
+        company={company}
+        isEditing={isEditing}
+        editedData={editedData}
+        onInputChange={handleInputChange}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <CompanyOverview 
