@@ -12,54 +12,76 @@ export default function Index() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showAuth, setShowAuth] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check initial session
     const checkSession = async () => {
-      console.log("Checking initial session...");
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError) {
-        console.error("Session error:", sessionError);
-        return;
-      }
-
-      console.log("Initial session check:", session);
-      
-      if (session) {
-        try {
-          const { data: profile, error: profileError } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", session.user.id)
-            .single();
-
-          if (profileError) {
-            console.error("Profile fetch error:", profileError);
-            return;
-          }
-
-          console.log("User profile:", profile);
-
-          if (profile?.role === "staff") {
-            console.log("Navigating to onboarding...");
-            navigate("/onboarding");
-          } else {
-            console.log("Navigating to dashboard...");
-            navigate("/dashboard");
-          }
-        } catch (error) {
-          console.error("Error during profile check:", error);
+      try {
+        console.log("Checking session...");
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error("Session error:", sessionError);
+          toast({
+            title: "Error",
+            description: "Failed to check session",
+            variant: "destructive",
+          });
+          setIsLoading(false);
+          return;
         }
+
+        if (!session) {
+          console.log("No active session found");
+          setIsLoading(false);
+          return;
+        }
+
+        console.log("Active session found:", session.user.id);
+
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id)
+          .single();
+
+        if (profileError) {
+          console.error("Profile fetch error:", profileError);
+          toast({
+            title: "Error",
+            description: "Failed to fetch user profile",
+            variant: "destructive",
+          });
+          setIsLoading(false);
+          return;
+        }
+
+        console.log("User profile:", profile);
+
+        if (profile?.role === "staff") {
+          console.log("Navigating to onboarding...");
+          navigate("/onboarding");
+        } else {
+          console.log("Navigating to dashboard...");
+          navigate("/dashboard");
+        }
+      } catch (error) {
+        console.error("Unexpected error:", error);
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
       }
     };
 
     checkSession();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log("Auth state changed:", event, session);
+        console.log("Auth state changed:", event, session?.user?.id);
         
         if (event === "SIGNED_IN" && session) {
           try {
@@ -71,6 +93,11 @@ export default function Index() {
 
             if (profileError) {
               console.error("Profile fetch error on auth change:", profileError);
+              toast({
+                title: "Error",
+                description: "Failed to fetch user profile",
+                variant: "destructive",
+              });
               return;
             }
 
@@ -85,6 +112,11 @@ export default function Index() {
             }
           } catch (error) {
             console.error("Error during profile check on auth change:", error);
+            toast({
+              title: "Error",
+              description: "An unexpected error occurred",
+              variant: "destructive",
+            });
           }
         }
       }
@@ -94,7 +126,17 @@ export default function Index() {
       console.log("Cleaning up auth subscription...");
       subscription.unsubscribe();
     };
-  }, [navigate]);
+  }, [navigate, toast]);
+
+  if (isLoading) {
+    return (
+      <Container>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        </div>
+      </Container>
+    );
+  }
 
   return (
     <Container>
