@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CalendarDays, Users, Building2, Activity } from "lucide-react";
+import type { PortfolioCompany } from "@/integrations/supabase/types/companies";
 
 export default function CompanyDashboard() {
   const { companyId } = useParams();
@@ -18,7 +19,7 @@ export default function CompanyDashboard() {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as PortfolioCompany;
     },
   });
 
