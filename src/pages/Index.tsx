@@ -1,141 +1,42 @@
 import { useEffect, useState } from "react";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Container } from "@/components/Container";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import AuthPage from "@/components/auth/AuthPage";
 
 export default function Index() {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [showAuth, setShowAuth] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
     const checkSession = async () => {
-      try {
-        console.log("Checking session...");
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError) {
-          console.error("Session error:", sessionError);
-          toast({
-            title: "Error",
-            description: "Failed to check session",
-            variant: "destructive",
-          });
-          setIsLoading(false);
-          return;
-        }
-
-        if (!session) {
-          console.log("No active session found");
-          setIsLoading(false);
-          return;
-        }
-
-        console.log("Active session found:", session.user.id);
-
-        const { data: profile, error: profileError } = await supabase
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        const { data: profile } = await supabase
           .from("profiles")
           .select("*")
           .eq("id", session.user.id)
           .single();
 
-        if (profileError) {
-          console.error("Profile fetch error:", profileError);
-          toast({
-            title: "Error",
-            description: "Failed to fetch user profile",
-            variant: "destructive",
-          });
-          setIsLoading(false);
-          return;
-        }
-
-        console.log("User profile:", profile);
-
         if (profile?.role === "staff") {
-          console.log("Navigating to onboarding...");
           navigate("/onboarding");
         } else {
-          console.log("Navigating to dashboard...");
           navigate("/dashboard");
         }
-      } catch (error) {
-        console.error("Unexpected error:", error);
-        toast({
-          title: "Error",
-          description: "An unexpected error occurred",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
       }
+      
+      setIsChecking(false);
     };
 
     checkSession();
+  }, [navigate]);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log("Auth state changed:", event, session?.user?.id);
-        
-        if (event === "SIGNED_IN" && session) {
-          try {
-            const { data: profile, error: profileError } = await supabase
-              .from("profiles")
-              .select("*")
-              .eq("id", session.user.id)
-              .single();
-
-            if (profileError) {
-              console.error("Profile fetch error on auth change:", profileError);
-              toast({
-                title: "Error",
-                description: "Failed to fetch user profile",
-                variant: "destructive",
-              });
-              return;
-            }
-
-            console.log("User profile on auth change:", profile);
-
-            if (profile?.role === "staff") {
-              console.log("Navigating to onboarding on auth change...");
-              navigate("/onboarding");
-            } else {
-              console.log("Navigating to dashboard on auth change...");
-              navigate("/dashboard");
-            }
-          } catch (error) {
-            console.error("Error during profile check on auth change:", error);
-            toast({
-              title: "Error",
-              description: "An unexpected error occurred",
-              variant: "destructive",
-            });
-          }
-        }
-      }
-    );
-
-    return () => {
-      console.log("Cleaning up auth subscription...");
-      subscription.unsubscribe();
-    };
-  }, [navigate, toast]);
-
-  if (isLoading) {
-    return (
-      <Container>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-        </div>
-      </Container>
-    );
+  if (isChecking) {
+    return null;
   }
 
   return (
@@ -200,38 +101,7 @@ export default function Index() {
             </div>
           </div>
         ) : (
-          <Card className="w-full max-w-md">
-            <CardHeader>
-              <CardTitle>Welcome to Verdandi</CardTitle>
-              <CardDescription>
-                Sign in to manage your fund and portfolio companies
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Auth
-                supabaseClient={supabase}
-                appearance={{
-                  theme: ThemeSupa,
-                  variables: {
-                    default: {
-                      colors: {
-                        brand: 'hsl(var(--primary))',
-                        brandAccent: 'hsl(var(--primary))',
-                      },
-                    },
-                  },
-                }}
-                providers={[]}
-              />
-              <Button
-                variant="ghost"
-                className="mt-4 w-full"
-                onClick={() => setShowAuth(false)}
-              >
-                Back to Home
-              </Button>
-            </CardContent>
-          </Card>
+          <AuthPage onBack={() => setShowAuth(false)} />
         )}
       </div>
     </Container>
