@@ -8,25 +8,38 @@ import { Container } from "@/components/Container";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-interface OnboardingForm {
+interface FundAdminForm {
   organizationName: string;
   fundName: string;
   vintageYear: number;
   fundSize: number;
 }
 
+interface EmployeeForm {
+  selectedFund: string;
+}
+
 export default function Onboarding() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [role, setRole] = useState<"admin" | "employee" | null>(null);
+  const [availableFunds, setAvailableFunds] = useState<Array<{ fund_id: string; name: string }>>([]);
 
-  const form = useForm<OnboardingForm>({
+  const adminForm = useForm<FundAdminForm>({
     defaultValues: {
       organizationName: "",
       fundName: "",
       vintageYear: new Date().getFullYear(),
       fundSize: 0,
+    },
+  });
+
+  const employeeForm = useForm<EmployeeForm>({
+    defaultValues: {
+      selectedFund: "",
     },
   });
 
@@ -40,7 +53,31 @@ export default function Onboarding() {
     checkAuth();
   }, [navigate]);
 
-  const onSubmit = async (data: OnboardingForm) => {
+  useEffect(() => {
+    const fetchFunds = async () => {
+      const { data: funds, error } = await supabase
+        .from("funds")
+        .select("fund_id, name")
+        .eq("status", "active");
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch available funds",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setAvailableFunds(funds || []);
+    };
+
+    if (role === "employee") {
+      fetchFunds();
+    }
+  }, [role, toast]);
+
+  const onSubmitAdmin = async (data: FundAdminForm) => {
     try {
       setLoading(true);
       const { data: { session } } = await supabase.auth.getSession();
@@ -113,21 +150,158 @@ export default function Onboarding() {
     }
   };
 
+  const onSubmitEmployee = async (data: EmployeeForm) => {
+    try {
+      setLoading(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.user) {
+        throw new Error("No user found");
+      }
+
+      // Get fund details
+      const { data: fund, error: fundError } = await supabase
+        .from("funds")
+        .select("*, organizations(*)")
+        .eq("fund_id", data.selectedFund)
+        .single();
+
+      if (fundError) throw fundError;
+
+      // Create organization user relationship
+      await supabase.from("organization_users").insert({
+        organization_id: fund.organization_id,
+        user_id: session.user.id,
+        role: "member",
+      });
+
+      // Create fund user relationship
+      await supabase.from("fund_users").insert({
+        fund_id: fund.fund_id,
+        user_id: session.user.id,
+        role: "analyst",
+      });
+
+      // Update user profile role
+      await supabase
+        .from("profiles")
+        .update({ role: "vc" })
+        .eq("id", session.user.id);
+
+      toast({
+        title: "Success!",
+        description: "You have successfully joined the fund.",
+      });
+
+      navigate("/dashboard");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!role) {
+    return (
+      <Container>
+        <div className="min-h-screen py-12">
+          <Card className="max-w-2xl mx-auto">
+            <CardHeader>
+              <CardTitle>Welcome to Verdandi</CardTitle>
+              <CardDescription>
+                Please select your role to continue with the onboarding process.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button
+                className="w-full mb-2"
+                onClick={() => setRole("admin")}
+              >
+                I'm setting up a new fund
+              </Button>
+              <Button
+                className="w-full"
+                variant="outline"
+                onClick={() => setRole("employee")}
+              >
+                I'm joining an existing fund
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </Container>
+    );
+  }
+
+  if (role === "employee") {
+    return (
+      <Container>
+        <div className="min-h-screen py-12">
+          <Card className="max-w-2xl mx-auto">
+            <CardHeader>
+              <CardTitle>Join Your Fund</CardTitle>
+              <CardDescription>
+                Select the fund you're joining to complete your registration.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form {...employeeForm}>
+                <form onSubmit={employeeForm.handleSubmit(onSubmitEmployee)} className="space-y-6">
+                  <FormField
+                    control={employeeForm.control}
+                    name="selectedFund"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Select Your Fund</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a fund" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {availableFunds.map((fund) => (
+                              <SelectItem key={fund.fund_id} value={fund.fund_id}>
+                                {fund.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Joining fund..." : "Join Fund"}
+                  </Button>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
+        </div>
+      </Container>
+    );
+  }
+
   return (
     <Container>
       <div className="min-h-screen py-12">
         <Card className="max-w-2xl mx-auto">
           <CardHeader>
-            <CardTitle>Welcome to Verdandi</CardTitle>
+            <CardTitle>Set Up Your Fund</CardTitle>
             <CardDescription>
-              Let's get your fund set up. Fill in the details below to create your organization and fund.
+              Fill in the details below to create your organization and fund.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <Form {...adminForm}>
+              <form onSubmit={adminForm.handleSubmit(onSubmitAdmin)} className="space-y-6">
                 <FormField
-                  control={form.control}
+                  control={adminForm.control}
                   name="organizationName"
                   render={({ field }) => (
                     <FormItem>
@@ -140,7 +314,7 @@ export default function Onboarding() {
                   )}
                 />
                 <FormField
-                  control={form.control}
+                  control={adminForm.control}
                   name="fundName"
                   render={({ field }) => (
                     <FormItem>
@@ -153,7 +327,7 @@ export default function Onboarding() {
                   )}
                 />
                 <FormField
-                  control={form.control}
+                  control={adminForm.control}
                   name="vintageYear"
                   render={({ field }) => (
                     <FormItem>
@@ -166,7 +340,7 @@ export default function Onboarding() {
                   )}
                 />
                 <FormField
-                  control={form.control}
+                  control={adminForm.control}
                   name="fundSize"
                   render={({ field }) => (
                     <FormItem>
