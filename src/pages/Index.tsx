@@ -14,14 +14,34 @@ export default function Index() {
   const [showAuth, setShowAuth] = useState(false);
 
   useEffect(() => {
+    // Check initial session
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id)
+          .single();
+
+        if (profile?.role === "staff") {
+          navigate("/onboarding");
+        } else {
+          navigate("/dashboard");
+        }
+      }
+    };
+    checkSession();
+
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (event === "SIGNED_IN") {
-          // Check if user has completed onboarding
+        console.log("Auth state changed:", event, session);
+        if (event === "SIGNED_IN" && session) {
           const { data: profile } = await supabase
             .from("profiles")
             .select("*")
-            .eq("id", session?.user?.id)
+            .eq("id", session.user.id)
             .single();
 
           if (profile?.role === "staff") {

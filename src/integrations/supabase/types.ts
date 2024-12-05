@@ -9,6 +9,50 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      files: {
+        Row: {
+          created_at: string
+          file_id: string
+          fund_id: string | null
+          name: string
+          path: string
+          size: number
+          type: string
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          file_id?: string
+          fund_id?: string | null
+          name: string
+          path: string
+          size: number
+          type: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          file_id?: string
+          fund_id?: string | null
+          name?: string
+          path?: string
+          size?: number
+          type?: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "files_fund_id_fkey"
+            columns: ["fund_id"]
+            isOneToOne: false
+            referencedRelation: "funds"
+            referencedColumns: ["fund_id"]
+          },
+        ]
+      }
       fund_users: {
         Row: {
           created_at: string
