@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { PortfolioCompany, CompanyMetricsHistory } from "@/integrations/supabase/types/companies";
 import { MetricsGrid } from './metrics/MetricsGrid';
 import { MetricsChart } from './metrics/MetricsChart';
+import { Button } from "@/components/ui/button";
 
 interface CompanyMetricsProps {
   company: PortfolioCompany;
@@ -88,6 +89,17 @@ export function CompanyMetrics({ company, isEditing = false }: CompanyMetricsPro
         isEditing={isEditing}
         onMetricChange={handleMetricChange}
       />
+      
+      {isEditing && (
+        <div className="flex justify-end">
+          <Button 
+            onClick={handleSave}
+            disabled={updateMetricsMutation.isPending}
+          >
+            {updateMetricsMutation.isPending ? "Saving..." : "Save Metrics"}
+          </Button>
+        </div>
+      )}
       
       {metricsHistory && metricsHistory.length > 0 && (
         <MetricsChart metricsHistory={metricsHistory} />
