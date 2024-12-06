@@ -12,7 +12,7 @@ interface MetricsSectionProps {
 }
 
 export function MetricsSection({ company, isEditing }: MetricsSectionProps) {
-  const { metricsHistory } = useCompanyMetrics(company);
+  const { metricsHistory, isLoading, refetch } = useCompanyMetrics(company);
   const latestMetrics = metricsHistory?.[metricsHistory.length - 1];
   
   const sharesOwnedPercentage = latestMetrics?.shares_owned || 0;
@@ -26,6 +26,15 @@ export function MetricsSection({ company, isEditing }: MetricsSectionProps) {
   const COLORS = ['hsl(var(--primary))', 'hsl(var(--muted))'];
   
   const stakeValue = (valuationAmount * sharesOwnedPercentage) / 100;
+
+  // Add effect to refetch data when component mounts
+  React.useEffect(() => {
+    refetch();
+  }, [refetch]);
+
+  if (isLoading) {
+    return <div>Loading metrics...</div>;
+  }
 
   return (
     <div className="space-y-6">

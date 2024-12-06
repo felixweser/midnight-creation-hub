@@ -7,7 +7,7 @@ export function useCompanyMetrics(company: PortfolioCompany) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: metricsHistory, isLoading } = useQuery({
+  const { data: metricsHistory, isLoading, refetch } = useQuery({
     queryKey: ["company-metrics", company.company_id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -23,7 +23,6 @@ export function useCompanyMetrics(company: PortfolioCompany) {
 
   const updateMetricsMutation = useMutation({
     mutationFn: async (newMetrics: Partial<CompanyMetricsHistory>) => {
-      // Remove any id field if present to let Supabase generate it
       const { id, ...metricsToUpdate } = newMetrics;
       
       const metricsData = {
@@ -64,6 +63,7 @@ export function useCompanyMetrics(company: PortfolioCompany) {
     metricsHistory,
     isLoading,
     updateMetrics: updateMetricsMutation.mutate,
-    isUpdating: updateMetricsMutation.isPending
+    isUpdating: updateMetricsMutation.isPending,
+    refetch
   };
 }
