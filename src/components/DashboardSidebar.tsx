@@ -67,45 +67,50 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar>
-      <SidebarContent>
-        <div className="flex items-center gap-2 px-4 py-5">
-          <SidebarTrigger className="hover:bg-accent" />
+      <SidebarContent className="flex flex-col h-full">
+        <div className="flex items-center gap-3 px-6 py-6 border-b border-border/5">
+          <SidebarTrigger className="hover:bg-accent rounded-lg" />
           <h2 className="text-xl font-bold bg-gradient-to-r from-primary/80 to-primary bg-clip-text text-transparent">
             Platform
           </h2>
         </div>
-        <SidebarGroup>
-          <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => {
-                const isActive = location.pathname === item.url;
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive}
-                      className={cn(
-                        "transition-colors hover:bg-primary/10",
-                        isActive && "bg-primary/10 text-primary"
-                      )}
-                    >
-                      <Link to={item.url}>
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        
+        <div className="flex-1 px-3 py-4">
+          <SidebarGroup>
+            <SidebarGroupLabel className="px-3 text-xs font-medium text-muted-foreground">
+              Dashboard
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {items.map((item) => {
+                  const isActive = location.pathname === item.url;
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive}
+                        className={cn(
+                          "transition-colors hover:bg-primary/10 rounded-lg",
+                          isActive && "bg-primary/10 text-primary font-medium"
+                        )}
+                      >
+                        <Link to={item.url}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </div>
 
-        <div className="mt-auto px-4 pb-4">
+        <div className="px-3 py-4 mt-auto border-t border-border/5">
           <SidebarMenuButton
             onClick={handleSignOut}
-            className="w-full justify-start text-destructive hover:bg-destructive/10"
+            className="w-full justify-start text-destructive hover:bg-destructive/10 rounded-lg"
           >
             <LogOut className="h-4 w-4" />
             <span>Sign Out</span>
