@@ -85,7 +85,8 @@ export function CompanyMetrics({ company, isEditing = false }: CompanyMetricsPro
   return (
     <div className="space-y-6">
       <MetricsGrid
-        metrics={isEditing ? editedMetrics : (latestMetrics || {})}
+        metrics={latestMetrics || {}}
+        editedMetrics={editedMetrics}
         isEditing={isEditing}
         onMetricChange={handleMetricChange}
       />

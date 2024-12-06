@@ -6,6 +6,7 @@ import { formatCurrency } from "@/lib/utils";
 interface MetricCardProps {
   title: string;
   value: number | null;
+  editedValue?: number | null;
   isEditing: boolean;
   isCurrency?: boolean;
   isPercentage?: boolean;
@@ -16,6 +17,7 @@ interface MetricCardProps {
 export function MetricCard({
   title,
   value,
+  editedValue,
   isEditing,
   isCurrency = false,
   isPercentage = false,
@@ -37,12 +39,17 @@ export function MetricCard({
       <CardContent>
         <div className="text-2xl font-bold">
           {isEditing ? (
-            <Input
-              type="number"
-              value={value || ''}
-              onChange={(e) => onChange(e.target.value)}
-              placeholder={`Enter ${title.toLowerCase()}`}
-            />
+            <div className="space-y-2">
+              <Input
+                type="number"
+                value={editedValue ?? ''}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder={`Enter ${title.toLowerCase()}`}
+              />
+              <div className="text-sm text-muted-foreground">
+                Current: {formatValue(value)}
+              </div>
+            </div>
           ) : (
             formatValue(value)
           )}
