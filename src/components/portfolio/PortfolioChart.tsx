@@ -25,15 +25,15 @@ export function PortfolioChart({ data }: PortfolioChartProps) {
         <CardTitle>Portfolio Value Over Time</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="h-[350px] px-2 pb-4">
+        <div className="h-[350px] px-4 pb-4">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={data}
-              margin={{ top: 10, right: 30, left: 10, bottom: 5 }}
+              margin={{ top: 10, right: 30, left: 40, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
-              <YAxis />
+              <YAxis width={80} />
               <Tooltip />
               <Line
                 type="monotone"
