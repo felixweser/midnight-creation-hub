@@ -15,7 +15,6 @@ export function MetricsSection({ company, isEditing }: MetricsSectionProps) {
   const { metricsHistory } = useCompanyMetrics(company);
   const latestMetrics = metricsHistory?.[metricsHistory.length - 1];
   
-  // Calculate ownership data based on shares_owned from metrics
   const sharesOwnedPercentage = latestMetrics?.shares_owned || 0;
   const valuationAmount = latestMetrics?.post_money_valuation || 0;
   
@@ -26,7 +25,6 @@ export function MetricsSection({ company, isEditing }: MetricsSectionProps) {
 
   const COLORS = ['hsl(var(--primary))', 'hsl(var(--muted))'];
   
-  // Calculate the value of owned stake
   const stakeValue = (valuationAmount * sharesOwnedPercentage) / 100;
 
   return (
@@ -58,9 +56,9 @@ export function MetricsSection({ company, isEditing }: MetricsSectionProps) {
           <CardHeader>
             <CardTitle>Ownership Structure</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="h-[200px] flex flex-col items-center">
-              <div className="h-[160px] w-full">
+          <CardContent className="pt-0">
+            <div className="flex flex-col items-center">
+              <div className="h-[180px] w-full flex items-center justify-center mb-4">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -81,7 +79,7 @@ export function MetricsSection({ company, isEditing }: MetricsSectionProps) {
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="text-center mt-2 space-y-1">
+              <div className="text-center space-y-1.5">
                 <p className="text-2xl font-bold text-primary">{sharesOwnedPercentage}%</p>
                 <p className="text-sm text-muted-foreground">Ownership Stake</p>
                 <p className="text-sm font-medium">{formatCurrency(stakeValue)}</p>
