@@ -5,6 +5,7 @@ export type CompanyMetadata = {
   performance?: string | null
   description?: string | null
   metrics?: Record<string, any> | null
+  runway_months?: number | null
 }
 
 export type PortfolioCompany = {
