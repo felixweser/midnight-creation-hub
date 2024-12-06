@@ -176,6 +176,66 @@ export type Database = {
           },
         ]
       }
+      investments: {
+        Row: {
+          amount_invested: number | null
+          company_id: string | null
+          created_at: string
+          fund_id: string | null
+          id: string
+          investment_date: string
+          investment_type: string | null
+          ownership_percentage: number | null
+          round_name: string | null
+          status: string | null
+          updated_at: string
+          valuation: number | null
+        }
+        Insert: {
+          amount_invested?: number | null
+          company_id?: string | null
+          created_at?: string
+          fund_id?: string | null
+          id?: string
+          investment_date: string
+          investment_type?: string | null
+          ownership_percentage?: number | null
+          round_name?: string | null
+          status?: string | null
+          updated_at?: string
+          valuation?: number | null
+        }
+        Update: {
+          amount_invested?: number | null
+          company_id?: string | null
+          created_at?: string
+          fund_id?: string | null
+          id?: string
+          investment_date?: string
+          investment_type?: string | null
+          ownership_percentage?: number | null
+          round_name?: string | null
+          status?: string | null
+          updated_at?: string
+          valuation?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investments_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "portfolio_companies"
+            referencedColumns: ["company_id"]
+          },
+          {
+            foreignKeyName: "investments_fund_id_fkey"
+            columns: ["fund_id"]
+            isOneToOne: false
+            referencedRelation: "funds"
+            referencedColumns: ["fund_id"]
+          },
+        ]
+      }
       investor_updates: {
         Row: {
           attachment_path: string | null

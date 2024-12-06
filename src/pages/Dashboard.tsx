@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import Portfolio from "./dashboard/Portfolio";
 import Companies from "./dashboard/Companies";
 import CompanyDashboard from "./dashboard/CompanyDashboard";
@@ -113,9 +113,9 @@ export default function Dashboard() {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="min-h-screen flex w-full bg-background">
+      <div className="flex min-h-screen w-full bg-background">
         <DashboardSidebar />
-        <main className="flex-1 overflow-auto">
+        <SidebarInset>
           <Container className="py-8">
             <Routes>
               <Route index element={<DashboardHome />} />
@@ -126,7 +126,7 @@ export default function Dashboard() {
               <Route path="documents" element={<Documents />} />
             </Routes>
           </Container>
-        </main>
+        </SidebarInset>
       </div>
     </SidebarProvider>
   );
