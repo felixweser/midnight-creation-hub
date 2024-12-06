@@ -21,13 +21,35 @@ export function MetricsSection({ company, isEditing }: MetricsSectionProps) {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <CompanyMetrics company={company} isEditing={isEditing} />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Runway</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{company.metadata?.runway_months || "N/A"} months</div>
+            <p className="text-sm text-muted-foreground">Current Runway</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Bank Balance</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{formatCurrency(10000000)}</div>
+            <p className="text-sm text-muted-foreground">Current Balance</p>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>Ownership Structure</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px]">
+            <div className="h-[200px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -52,30 +74,6 @@ export function MetricsSection({ company, isEditing }: MetricsSectionProps) {
                 <p className="text-sm text-muted-foreground">Ownership Stake</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <CompanyMetrics company={company} isEditing={isEditing} />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Runway</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{company.metadata?.runway_months || "N/A"} months</div>
-            <p className="text-sm text-muted-foreground">Current Runway</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Bank Balance</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{formatCurrency(10000000)}</div>
-            <p className="text-sm text-muted-foreground">Current Balance</p>
           </CardContent>
         </Card>
       </div>
