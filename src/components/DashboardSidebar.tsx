@@ -19,6 +19,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
+  SidebarRail,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 
@@ -110,6 +111,7 @@ export function DashboardSidebar() {
           </SidebarMenuButton>
         </div>
       </SidebarContent>
+      <SidebarRail />
     </Sidebar>
   );
 }
