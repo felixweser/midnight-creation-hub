@@ -20,12 +20,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { CreateCompanyForm } from "@/components/companies/CreateCompanyForm";
+import { usePortfolioData } from "@/hooks/usePortfolioData";
+import { MetricsOverview } from "@/components/portfolio/MetricsOverview";
+import { PortfolioChart } from "@/components/portfolio/PortfolioChart";
 
 export default function Companies() {
   const navigate = useNavigate();
   const [companies, setCompanies] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { metrics, chartData } = usePortfolioData();
 
   const fetchCompanies = async () => {
     try {
@@ -56,7 +60,10 @@ export default function Companies() {
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold">Portfolio Companies</h2>
+        <div>
+          <h2 className="text-3xl font-bold">Portfolio Overview</h2>
+          <p className="text-muted-foreground mt-1">Track and manage your portfolio companies</p>
+        </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -77,9 +84,12 @@ export default function Companies() {
         </Dialog>
       </div>
 
+      <MetricsOverview metrics={metrics} />
+      <PortfolioChart data={chartData} />
+
       <Card>
         <CardHeader>
-          <CardTitle>All Companies</CardTitle>
+          <CardTitle>Portfolio Companies</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -92,8 +102,9 @@ export default function Companies() {
                 <TableRow>
                   <TableHead>Company Name</TableHead>
                   <TableHead>Industry</TableHead>
-                  <TableHead>Founded</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Stage</TableHead>
+                  <TableHead>Location</TableHead>
+                  <TableHead>Total Raised</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -102,12 +113,14 @@ export default function Companies() {
                   <TableRow key={company.company_id}>
                     <TableCell className="font-medium">{company.name}</TableCell>
                     <TableCell>{company.industry}</TableCell>
-                    <TableCell>{company.founding_date ? new Date(company.founding_date).getFullYear() : 'N/A'}</TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ring-green-600/20 bg-green-50/10 text-green-400">
-                        {company.status || 'Active'}
-                      </span>
-                    </TableCell>
+                    <TableCell>{company.investment_stage || 'N/A'}</TableCell>
+                    <TableCell>{company.hq_location || 'N/A'}</TableCell>
+                    <TableCell>{new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
+                    }).format(company.total_raised || 0)}</TableCell>
                     <TableCell className="text-right">
                       <Button 
                         variant="outline" 

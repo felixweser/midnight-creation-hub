@@ -1,5 +1,4 @@
 import {
-  BarChart3,
   Building,
   FileText,
   Home,
@@ -16,11 +15,6 @@ const items = [
     title: "Overview",
     url: "/dashboard",
     icon: Home,
-  },
-  {
-    title: "Portfolio",
-    url: "/dashboard/portfolio",
-    icon: BarChart3,
   },
   {
     title: "Companies",
