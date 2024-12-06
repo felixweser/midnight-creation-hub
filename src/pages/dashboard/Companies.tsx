@@ -112,7 +112,7 @@ export default function Companies() {
                       <Button 
                         variant="outline" 
                         size="sm"
-                        onClick={() => navigate(`/dashboard/company/${company.company_id}`)}
+                        onClick={() => navigate(`/dashboard/companies/${company.company_id}`)}
                       >
                         View Details
                       </Button>
