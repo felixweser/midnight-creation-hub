@@ -8,9 +8,12 @@ import { DialogFooter } from "@/components/ui/dialog";
 import { CompanyDetailsFields } from "./CompanyDetailsFields";
 import { InvestmentDetailsFields } from "./InvestmentDetailsFields";
 import { companyFormSchema, CompanyFormValues } from "./types";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function CreateCompanyForm({ onSuccess }: { onSuccess: () => void }) {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
   const form = useForm<CompanyFormValues>({
     resolver: zodResolver(companyFormSchema),
     defaultValues: {
@@ -66,6 +69,10 @@ export function CreateCompanyForm({ onSuccess }: { onSuccess: () => void }) {
         });
 
       if (investmentError) throw investmentError;
+
+      // Invalidate both the companies list and the specific company query
+      queryClient.invalidateQueries({ queryKey: ["companies"] });
+      queryClient.invalidateQueries({ queryKey: ["company", companyData.company_id] });
 
       toast({
         title: "Success",
