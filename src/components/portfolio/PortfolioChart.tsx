@@ -21,13 +21,16 @@ interface PortfolioChartProps {
 export function PortfolioChart({ data }: PortfolioChartProps) {
   return (
     <Card className="mt-8">
-      <CardHeader>
+      <CardHeader className="pb-4">
         <CardTitle>Portfolio Value Over Time</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="h-[300px]">
+      <CardContent className="p-0">
+        <div className="h-[350px] px-2 pb-4">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <LineChart
+              data={data}
+              margin={{ top: 10, right: 30, left: 10, bottom: 5 }}
+            >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
