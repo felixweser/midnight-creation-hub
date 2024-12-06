@@ -4,6 +4,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { formatCurrency } from "@/lib/utils";
 import { CompanyMetrics } from "@/components/companies/CompanyMetrics";
 import type { PortfolioCompany } from "@/integrations/supabase/types/companies";
+import { useCompanyMetrics } from '@/hooks/useCompanyMetrics';
 
 interface MetricsSectionProps {
   company: PortfolioCompany;
@@ -11,9 +12,12 @@ interface MetricsSectionProps {
 }
 
 export function MetricsSection({ company, isEditing }: MetricsSectionProps) {
+  const { metricsHistory } = useCompanyMetrics(company);
+  const latestMetrics = metricsHistory?.[metricsHistory.length - 1];
+  
   // Calculate ownership data based on shares_owned from metrics
-  const sharesOwnedPercentage = company.metadata?.metrics?.shares_owned || 0;
-  const valuationAmount = company.metadata?.metrics?.post_money_valuation || 0;
+  const sharesOwnedPercentage = latestMetrics?.shares_owned || 0;
+  const valuationAmount = latestMetrics?.post_money_valuation || 0;
   
   const valuationData = [
     { name: 'Owned', value: sharesOwnedPercentage },
@@ -35,7 +39,7 @@ export function MetricsSection({ company, isEditing }: MetricsSectionProps) {
             <CardTitle>Runway</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{company.metadata?.runway_months || "N/A"} months</div>
+            <div className="text-3xl font-bold">{latestMetrics?.runway_months || "N/A"} months</div>
             <p className="text-sm text-muted-foreground">Current Runway</p>
           </CardContent>
         </Card>
