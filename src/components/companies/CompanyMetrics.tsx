@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/components/ui/use-toast";
 import { PortfolioCompany, CompanyMetricsHistory } from "@/integrations/supabase/types/companies";
 import { MetricsGrid } from './metrics/MetricsGrid';
 import { MetricsChart } from './metrics/MetricsChart';
 import { Button } from "@/components/ui/button";
+import { useCompanyMetrics } from '@/hooks/useCompanyMetrics';
 
 interface CompanyMetricsProps {
   company: PortfolioCompany;
@@ -14,54 +12,7 @@ interface CompanyMetricsProps {
 }
 
 export function CompanyMetrics({ company, isEditing = false }: CompanyMetricsProps) {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  const { data: metricsHistory, isLoading } = useQuery({
-    queryKey: ["company-metrics", company.company_id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("company_metrics_history")
-        .select("*")
-        .eq("company_id", company.company_id)
-        .order("metric_date", { ascending: true });
-
-      if (error) throw error;
-      return data as CompanyMetricsHistory[];
-    },
-  });
-
-  const updateMetricsMutation = useMutation({
-    mutationFn: async (newMetrics: Partial<CompanyMetricsHistory>) => {
-      const metricsToUpdate = {
-        ...newMetrics,
-        company_id: company.company_id,
-        metric_date: new Date().toISOString().split('T')[0],
-      };
-
-      const { error } = await supabase
-        .from("company_metrics_history")
-        .insert(metricsToUpdate);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["company-metrics", company.company_id] });
-      toast({
-        title: "Success",
-        description: "Company metrics updated successfully",
-      });
-    },
-    onError: (error) => {
-      console.error("Error updating metrics:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to update company metrics",
-      });
-    },
-  });
-
+  const { metricsHistory, isLoading, updateMetrics, isUpdating } = useCompanyMetrics(company);
   const latestMetrics = metricsHistory?.[metricsHistory.length - 1];
   const [editedMetrics, setEditedMetrics] = useState<Partial<CompanyMetricsHistory>>(
     latestMetrics || {}
@@ -75,7 +26,7 @@ export function CompanyMetrics({ company, isEditing = false }: CompanyMetricsPro
   };
 
   const handleSave = () => {
-    updateMetricsMutation.mutate(editedMetrics);
+    updateMetrics(editedMetrics);
   };
 
   if (isLoading) {
@@ -95,9 +46,9 @@ export function CompanyMetrics({ company, isEditing = false }: CompanyMetricsPro
         <div className="flex justify-end">
           <Button 
             onClick={handleSave}
-            disabled={updateMetricsMutation.isPending}
+            disabled={isUpdating}
           >
-            {updateMetricsMutation.isPending ? "Saving..." : "Save Metrics"}
+            {isUpdating ? "Saving..." : "Save Metrics"}
           </Button>
         </div>
       )}
