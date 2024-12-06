@@ -20,10 +20,8 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
   SidebarRail,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 
 const items = [
   {
@@ -61,46 +59,17 @@ const items = [
 export function DashboardSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { setOpen } = useSidebar();
-  const [isLocked, setIsLocked] = useState(false);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     navigate("/");
   };
 
-  const handleMouseEnter = () => {
-    if (!isLocked) {
-      setOpen(true);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (!isLocked) {
-      setOpen(false);
-    }
-  };
-
-  const handleTriggerClick = () => {
-    setIsLocked(!isLocked);
-    setOpen(!isLocked);
-  };
-
   return (
     <Sidebar>
-      <SidebarContent 
-        className="flex flex-col h-full"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
+      <SidebarContent className="flex flex-col h-full">
         <div className="flex items-center gap-3 px-6 py-6 border-b border-border/5">
-          <SidebarTrigger 
-            className={cn(
-              "hover:bg-accent rounded-lg transition-colors",
-              isLocked && "bg-accent"
-            )}
-            onClick={handleTriggerClick}
-          />
+          <SidebarTrigger className="hover:bg-accent rounded-lg" />
           <h2 className="text-xl font-bold bg-gradient-to-r from-primary/80 to-primary bg-clip-text text-transparent">
             Platform
           </h2>
