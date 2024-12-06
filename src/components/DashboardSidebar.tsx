@@ -65,7 +65,7 @@ export function DashboardSidebar() {
   };
 
   return (
-    <Sidebar>
+    <Sidebar variant="sidebar" collapsible="icon">
       <SidebarContent className="flex flex-col h-full">
         <SidebarHeader />
         
