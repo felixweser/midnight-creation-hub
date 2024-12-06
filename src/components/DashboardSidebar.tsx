@@ -66,53 +66,57 @@ export function DashboardSidebar() {
   };
 
   return (
-    <Sidebar>
-      <SidebarContent>
-        <div className="flex items-center justify-between px-6 py-5">
-          <h2 className="text-xl font-bold bg-gradient-to-r from-primary/80 to-primary bg-clip-text text-transparent">
-            VC Platform
-          </h2>
-          <SidebarTrigger />
-        </div>
-        <SidebarGroup>
-          <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => {
-                const isActive = location.pathname === item.url;
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive}
-                      className={cn(
-                        "transition-colors hover:bg-primary/10",
-                        isActive && "bg-primary/10 text-primary"
-                      )}
-                    >
-                      <Link to={item.url}>
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+    <>
+      <div className="fixed top-4 left-4 z-50">
+        <SidebarTrigger className="bg-background shadow-sm border hover:bg-accent" />
+      </div>
+      <Sidebar>
+        <SidebarContent>
+          <div className="flex items-center justify-between px-6 py-5">
+            <h2 className="text-xl font-bold bg-gradient-to-r from-primary/80 to-primary bg-clip-text text-transparent">
+              VC Platform
+            </h2>
+          </div>
+          <SidebarGroup>
+            <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {items.map((item) => {
+                  const isActive = location.pathname === item.url;
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive}
+                        className={cn(
+                          "transition-colors hover:bg-primary/10",
+                          isActive && "bg-primary/10 text-primary"
+                        )}
+                      >
+                        <Link to={item.url}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
 
-        <div className="mt-auto px-4 pb-4">
-          <SidebarMenuButton
-            onClick={handleSignOut}
-            className="w-full justify-start text-destructive hover:bg-destructive/10"
-          >
-            <LogOut className="h-4 w-4" />
-            <span>Sign Out</span>
-          </SidebarMenuButton>
-        </div>
-      </SidebarContent>
-      <SidebarRail />
-    </Sidebar>
+          <div className="mt-auto px-4 pb-4">
+            <SidebarMenuButton
+              onClick={handleSignOut}
+              className="w-full justify-start text-destructive hover:bg-destructive/10"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Sign Out</span>
+            </SidebarMenuButton>
+          </div>
+        </SidebarContent>
+        <SidebarRail />
+      </Sidebar>
+    </>
   );
 }
