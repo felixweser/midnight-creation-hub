@@ -70,9 +70,26 @@ export function CreateCompanyForm({ onSuccess }: { onSuccess: () => void }) {
 
       if (investmentError) throw investmentError;
 
+      // Create initial metrics record
+      const { error: metricsError } = await supabase
+        .from("company_metrics_history")
+        .insert({
+          company_id: companyData.company_id,
+          metric_date: new Date().toISOString().split('T')[0],
+          post_money_valuation: values.valuation,
+          shares_owned: values.ownershipPercentage,
+          arr: 0,
+          mrr: 0,
+          burn_rate: 0,
+          runway_months: 0,
+        });
+
+      if (metricsError) throw metricsError;
+
       // Invalidate both the companies list and the specific company query
       queryClient.invalidateQueries({ queryKey: ["companies"] });
       queryClient.invalidateQueries({ queryKey: ["company", companyData.company_id] });
+      queryClient.invalidateQueries({ queryKey: ["company-metrics", companyData.company_id] });
 
       toast({
         title: "Success",
