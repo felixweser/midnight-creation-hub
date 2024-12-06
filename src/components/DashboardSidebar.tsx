@@ -7,7 +7,7 @@ import {
   Users,
   LogOut,
 } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Sidebar,
@@ -86,10 +86,10 @@ export function DashboardSidebar() {
                         isActive && "bg-primary/10 text-primary"
                       )}
                     >
-                      <a href={item.url}>
+                      <Link to={item.url}>
                         <item.icon className="h-4 w-4" />
                         <span>{item.title}</span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
