@@ -17,19 +17,20 @@ export function CompanyStats({
   onInputChange,
 }: CompanyStatsProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       <Card className="hover-card">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Founded</CardTitle>
-          <CalendarDays className="h-4 w-4 text-muted-foreground" />
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-3 pt-3">
+          <CardTitle className="text-xs font-medium text-muted-foreground">Founded</CardTitle>
+          <CalendarDays className="h-3 w-3 text-muted-foreground" />
         </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">
+        <CardContent className="px-3 pb-3 pt-0">
+          <div className="text-sm font-semibold">
             {isEditing ? (
               <Input
                 type="date"
                 value={editedData.founding_date || ""}
                 onChange={(e) => onInputChange("founding_date", e.target.value)}
+                className="h-7 text-sm"
               />
             ) : (
               company.founding_date
@@ -41,16 +42,17 @@ export function CompanyStats({
       </Card>
 
       <Card className="hover-card">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Industry</CardTitle>
-          <Building2 className="h-4 w-4 text-muted-foreground" />
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-3 pt-3">
+          <CardTitle className="text-xs font-medium text-muted-foreground">Industry</CardTitle>
+          <Building2 className="h-3 w-3 text-muted-foreground" />
         </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">
+        <CardContent className="px-3 pb-3 pt-0">
+          <div className="text-sm font-semibold">
             {isEditing ? (
               <Input
                 value={editedData.industry || ""}
                 onChange={(e) => onInputChange("industry", e.target.value)}
+                className="h-7 text-sm"
               />
             ) : (
               company.industry || "N/A"
@@ -60,12 +62,12 @@ export function CompanyStats({
       </Card>
 
       <Card className="hover-card">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Team Size</CardTitle>
-          <Users className="h-4 w-4 text-muted-foreground" />
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-3 pt-3">
+          <CardTitle className="text-xs font-medium text-muted-foreground">Team Size</CardTitle>
+          <Users className="h-3 w-3 text-muted-foreground" />
         </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">
+        <CardContent className="px-3 pb-3 pt-0">
+          <div className="text-sm font-semibold">
             {isEditing ? (
               <Input
                 type="number"
@@ -73,6 +75,7 @@ export function CompanyStats({
                 onChange={(e) =>
                   onInputChange("metadata.team_size", parseInt(e.target.value))
                 }
+                className="h-7 text-sm"
               />
             ) : (
               company.metadata?.team_size || "N/A"
@@ -82,18 +85,19 @@ export function CompanyStats({
       </Card>
 
       <Card className="hover-card">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Performance</CardTitle>
-          <Activity className="h-4 w-4 text-muted-foreground" />
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-3 pt-3">
+          <CardTitle className="text-xs font-medium text-muted-foreground">Performance</CardTitle>
+          <Activity className="h-3 w-3 text-muted-foreground" />
         </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">
+        <CardContent className="px-3 pb-3 pt-0">
+          <div className="text-sm font-semibold">
             {isEditing ? (
               <Input
                 value={editedData.metadata?.performance || ""}
                 onChange={(e) =>
                   onInputChange("metadata.performance", e.target.value)
                 }
+                className="h-7 text-sm"
               />
             ) : (
               company.metadata?.performance || "N/A"
