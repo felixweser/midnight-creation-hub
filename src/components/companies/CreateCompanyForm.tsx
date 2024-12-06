@@ -86,10 +86,11 @@ export function CreateCompanyForm({ onSuccess }: { onSuccess: () => void }) {
 
       if (metricsError) throw metricsError;
 
-      // Invalidate both the companies list and the specific company query
+      // Invalidate all relevant queries
       queryClient.invalidateQueries({ queryKey: ["companies"] });
       queryClient.invalidateQueries({ queryKey: ["company", companyData.company_id] });
       queryClient.invalidateQueries({ queryKey: ["company-metrics", companyData.company_id] });
+      queryClient.invalidateQueries({ queryKey: ["investments", companyData.company_id] });
 
       toast({
         title: "Success",
