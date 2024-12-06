@@ -23,17 +23,25 @@ export function useCompanyMetrics(company: PortfolioCompany) {
 
   const updateMetricsMutation = useMutation({
     mutationFn: async (newMetrics: Partial<CompanyMetricsHistory>) => {
-      const metricsToUpdate = {
-        ...newMetrics,
+      // Remove any id field if present to let Supabase generate it
+      const { id, ...metricsToUpdate } = newMetrics;
+      
+      const metricsData = {
+        ...metricsToUpdate,
         company_id: company.company_id,
         metric_date: new Date().toISOString().split('T')[0],
       };
 
+      console.log('Inserting metrics:', metricsData);
+      
       const { error } = await supabase
         .from("company_metrics_history")
-        .insert(metricsToUpdate);
+        .insert(metricsData);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error inserting metrics:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["company-metrics", company.company_id] });
