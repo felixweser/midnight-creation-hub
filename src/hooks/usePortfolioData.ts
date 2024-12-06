@@ -44,7 +44,12 @@ export function usePortfolioData() {
         // Fetch metrics history for calculations
         const { data: metricsData, error: metricsError } = await supabase
           .from("company_metrics_history")
-          .select("*")
+          .select(`
+            *,
+            portfolio_companies (
+              name
+            )
+          `)
           .order('metric_date', { ascending: true });
 
         if (metricsError) {
@@ -74,11 +79,19 @@ export function usePortfolioData() {
 
           // Calculate current period metrics
           const currentMetrics = metricsByDate[currentDate];
-          const currentAUM = currentMetrics.reduce((sum, m) => sum + (m.post_money_valuation || 0), 0);
+          const currentAUM = currentMetrics.reduce((sum, m) => {
+            const valuation = m.post_money_valuation || 0;
+            const ownershipPercentage = (m.shares_owned || 0) / 100;
+            return sum + (valuation * ownershipPercentage);
+          }, 0);
           
           // Calculate previous period metrics
           const previousMetrics = metricsByDate[previousDate];
-          const previousAUM = previousMetrics.reduce((sum, m) => sum + (m.post_money_valuation || 0), 0);
+          const previousAUM = previousMetrics.reduce((sum, m) => {
+            const valuation = m.post_money_valuation || 0;
+            const ownershipPercentage = (m.shares_owned || 0) / 100;
+            return sum + (valuation * ownershipPercentage);
+          }, 0);
 
           // Calculate percentage changes
           const aumChange = previousAUM ? ((currentAUM - previousAUM) / previousAUM) * 100 : 0;
@@ -95,7 +108,11 @@ export function usePortfolioData() {
           // Prepare chart data
           const chartData = Object.entries(metricsByDate).map(([date, metrics]) => ({
             month: new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-            value: metrics.reduce((sum, m) => sum + (m.post_money_valuation || 0), 0)
+            value: metrics.reduce((sum, m) => {
+              const valuation = m.post_money_valuation || 0;
+              const ownershipPercentage = (m.shares_owned || 0) / 100;
+              return sum + (valuation * ownershipPercentage);
+            }, 0)
           }));
 
           setChartData(chartData);
