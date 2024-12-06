@@ -9,6 +9,50 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      capital_calls: {
+        Row: {
+          amount: number
+          call_date: string
+          created_at: string
+          cumulative_called: number | null
+          fund_id: string | null
+          id: string
+          remaining_commitment: number | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          call_date: string
+          created_at?: string
+          cumulative_called?: number | null
+          fund_id?: string | null
+          id?: string
+          remaining_commitment?: number | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          call_date?: string
+          created_at?: string
+          cumulative_called?: number | null
+          fund_id?: string | null
+          id?: string
+          remaining_commitment?: number | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "capital_calls_fund_id_fkey"
+            columns: ["fund_id"]
+            isOneToOne: false
+            referencedRelation: "funds"
+            referencedColumns: ["fund_id"]
+          },
+        ]
+      }
       company_metrics_history: {
         Row: {
           arr: number | null
