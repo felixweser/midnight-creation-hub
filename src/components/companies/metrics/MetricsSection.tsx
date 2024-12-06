@@ -11,13 +11,19 @@ interface MetricsSectionProps {
 }
 
 export function MetricsSection({ company, isEditing }: MetricsSectionProps) {
-  // Sample data for the valuation donut chart
+  // Calculate ownership data based on shares_owned from metrics
+  const sharesOwnedPercentage = company.metadata?.metrics?.shares_owned || 0;
+  const valuationAmount = company.metadata?.metrics?.post_money_valuation || 0;
+  
   const valuationData = [
-    { name: 'Owned', value: 25 }, // Replace with actual shares_owned percentage
-    { name: 'Others', value: 75 }, // Remaining percentage
+    { name: 'Owned', value: sharesOwnedPercentage },
+    { name: 'Others', value: 100 - sharesOwnedPercentage },
   ];
 
   const COLORS = ['hsl(var(--primary))', 'hsl(var(--muted))'];
+  
+  // Calculate the value of owned stake
+  const stakeValue = (valuationAmount * sharesOwnedPercentage) / 100;
 
   return (
     <div className="space-y-6">
@@ -66,12 +72,13 @@ export function MetricsSection({ company, isEditing }: MetricsSectionProps) {
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip formatter={(value) => `${value}%`} />
                 </PieChart>
               </ResponsiveContainer>
               <div className="text-center mt-4">
-                <p className="text-2xl font-bold text-primary">25%</p>
+                <p className="text-2xl font-bold text-primary">{sharesOwnedPercentage}%</p>
                 <p className="text-sm text-muted-foreground">Ownership Stake</p>
+                <p className="text-sm font-medium mt-1">{formatCurrency(stakeValue)}</p>
               </div>
             </div>
           </CardContent>
