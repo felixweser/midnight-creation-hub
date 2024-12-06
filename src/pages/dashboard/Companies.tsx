@@ -67,12 +67,12 @@ export default function Companies() {
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> Add Company
+              <Plus className="mr-2 h-4 w-4" /> Add Investment
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create New Company</DialogTitle>
+              <DialogTitle>Create New Investment</DialogTitle>
             </DialogHeader>
             <CreateCompanyForm 
               onSuccess={() => {
