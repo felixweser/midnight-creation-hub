@@ -84,6 +84,7 @@ export function DashboardSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
+                      isActive={isActive}
                       className={cn(
                         "transition-colors hover:bg-primary/10",
                         isActive && "bg-primary/10 text-primary"
