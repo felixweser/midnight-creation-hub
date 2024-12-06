@@ -18,6 +18,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 
@@ -66,10 +67,11 @@ export function DashboardSidebar() {
   return (
     <Sidebar>
       <SidebarContent>
-        <div className="px-6 py-5">
+        <div className="flex items-center justify-between px-6 py-5">
           <h2 className="text-xl font-bold bg-gradient-to-r from-primary/80 to-primary bg-clip-text text-transparent">
             VC Platform
           </h2>
+          <SidebarTrigger />
         </div>
         <SidebarGroup>
           <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
