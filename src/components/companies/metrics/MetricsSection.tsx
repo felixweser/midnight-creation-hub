@@ -49,7 +49,7 @@ export function MetricsSection({ company, isEditing }: MetricsSectionProps) {
             <CardTitle>Bank Balance</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{formatCurrency(10000000)}</div>
+            <div className="text-3xl font-bold">{formatCurrency(latestMetrics?.burn_rate || 0)}</div>
             <p className="text-sm text-muted-foreground">Current Balance</p>
           </CardContent>
         </Card>
@@ -83,6 +83,7 @@ export function MetricsSection({ company, isEditing }: MetricsSectionProps) {
                 <p className="text-2xl font-bold text-primary">{sharesOwnedPercentage}%</p>
                 <p className="text-sm text-muted-foreground">Ownership Stake</p>
                 <p className="text-sm font-medium mt-1">{formatCurrency(stakeValue)}</p>
+                <p className="text-xs text-muted-foreground mt-1">of {formatCurrency(valuationAmount)} valuation</p>
               </div>
             </div>
           </CardContent>
