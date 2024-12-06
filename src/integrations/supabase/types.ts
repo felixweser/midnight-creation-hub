@@ -388,30 +388,42 @@ export type Database = {
           company_id: string
           created_at: string
           founding_date: string | null
+          hq_location: string | null
           industry: string | null
+          initial_investment_date: string | null
+          investment_stage: string | null
           metadata: Json | null
           name: string
           status: string | null
+          total_raised: number | null
           updated_at: string
         }
         Insert: {
           company_id?: string
           created_at?: string
           founding_date?: string | null
+          hq_location?: string | null
           industry?: string | null
+          initial_investment_date?: string | null
+          investment_stage?: string | null
           metadata?: Json | null
           name: string
           status?: string | null
+          total_raised?: number | null
           updated_at?: string
         }
         Update: {
           company_id?: string
           created_at?: string
           founding_date?: string | null
+          hq_location?: string | null
           industry?: string | null
+          initial_investment_date?: string | null
+          investment_stage?: string | null
           metadata?: Json | null
           name?: string
           status?: string | null
+          total_raised?: number | null
           updated_at?: string
         }
         Relationships: []

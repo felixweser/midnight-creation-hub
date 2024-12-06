@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { CalendarDays, Users, Building2, Activity } from "lucide-react";
+import { CalendarDays, Users, Building2, Activity, MapPin, TrendingUp, Calendar, PiggyBank } from "lucide-react";
 import { PortfolioCompany } from "@/integrations/supabase/types/companies";
+import { formatCurrency } from "@/lib/utils";
 
 interface CompanyStatsProps {
   company: PortfolioCompany;
@@ -43,19 +44,19 @@ export function CompanyStats({
 
       <Card className="hover-card">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-3 pt-3">
-          <CardTitle className="text-xs font-medium text-muted-foreground">Industry</CardTitle>
-          <Building2 className="h-3 w-3 text-muted-foreground" />
+          <CardTitle className="text-xs font-medium text-muted-foreground">Location</CardTitle>
+          <MapPin className="h-3 w-3 text-muted-foreground" />
         </CardHeader>
         <CardContent className="px-3 pb-3 pt-0">
           <div className="text-sm font-semibold">
             {isEditing ? (
               <Input
-                value={editedData.industry || ""}
-                onChange={(e) => onInputChange("industry", e.target.value)}
+                value={editedData.hq_location || ""}
+                onChange={(e) => onInputChange("hq_location", e.target.value)}
                 className="h-7 text-sm"
               />
             ) : (
-              company.industry || "N/A"
+              company.hq_location || "N/A"
             )}
           </div>
         </CardContent>
@@ -63,44 +64,40 @@ export function CompanyStats({
 
       <Card className="hover-card">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-3 pt-3">
-          <CardTitle className="text-xs font-medium text-muted-foreground">Team Size</CardTitle>
-          <Users className="h-3 w-3 text-muted-foreground" />
+          <CardTitle className="text-xs font-medium text-muted-foreground">Stage</CardTitle>
+          <TrendingUp className="h-3 w-3 text-muted-foreground" />
+        </CardHeader>
+        <CardContent className="px-3 pb-3 pt-0">
+          <div className="text-sm font-semibold">
+            {isEditing ? (
+              <Input
+                value={editedData.investment_stage || ""}
+                onChange={(e) => onInputChange("investment_stage", e.target.value)}
+                className="h-7 text-sm"
+              />
+            ) : (
+              company.investment_stage || "N/A"
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="hover-card">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-3 pt-3">
+          <CardTitle className="text-xs font-medium text-muted-foreground">Total Raised</CardTitle>
+          <PiggyBank className="h-3 w-3 text-muted-foreground" />
         </CardHeader>
         <CardContent className="px-3 pb-3 pt-0">
           <div className="text-sm font-semibold">
             {isEditing ? (
               <Input
                 type="number"
-                value={editedData.metadata?.team_size || ""}
-                onChange={(e) =>
-                  onInputChange("metadata.team_size", parseInt(e.target.value))
-                }
+                value={editedData.total_raised || ""}
+                onChange={(e) => onInputChange("total_raised", parseFloat(e.target.value))}
                 className="h-7 text-sm"
               />
             ) : (
-              company.metadata?.team_size || "N/A"
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="hover-card">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-3 pt-3">
-          <CardTitle className="text-xs font-medium text-muted-foreground">Performance</CardTitle>
-          <Activity className="h-3 w-3 text-muted-foreground" />
-        </CardHeader>
-        <CardContent className="px-3 pb-3 pt-0">
-          <div className="text-sm font-semibold">
-            {isEditing ? (
-              <Input
-                value={editedData.metadata?.performance || ""}
-                onChange={(e) =>
-                  onInputChange("metadata.performance", e.target.value)
-                }
-                className="h-7 text-sm"
-              />
-            ) : (
-              company.metadata?.performance || "N/A"
+              formatCurrency(company.total_raised || 0)
             )}
           </div>
         </CardContent>

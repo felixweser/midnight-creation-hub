@@ -17,6 +17,10 @@ export type PortfolioCompany = {
   name: string
   status: string | null
   updated_at: string
+  hq_location: string | null
+  investment_stage: string | null
+  initial_investment_date: string | null
+  total_raised: number | null
 }
 
 export type PortfolioCompanyInsert = Omit<PortfolioCompany, 'company_id' | 'created_at' | 'updated_at'> & {
