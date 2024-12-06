@@ -112,10 +112,10 @@ export default function Dashboard() {
   }, [navigate]);
 
   return (
-    <SidebarProvider defaultOpen={true}>
+    <SidebarProvider defaultOpen>
       <div className="flex min-h-screen w-full bg-background">
         <DashboardSidebar />
-        <SidebarInset>
+        <SidebarInset className="flex-1">
           <Container className="py-8">
             <Routes>
               <Route index element={<DashboardHome />} />
