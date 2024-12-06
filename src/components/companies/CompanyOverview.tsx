@@ -10,7 +10,7 @@ interface CompanyOverviewProps {
 
 export function CompanyOverview({ company, isEditing, onDescriptionChange }: CompanyOverviewProps) {
   return (
-    <Card>
+    <Card className="hover-card">
       <CardHeader>
         <CardTitle>Company Overview</CardTitle>
       </CardHeader>
@@ -22,7 +22,7 @@ export function CompanyOverview({ company, isEditing, onDescriptionChange }: Com
             className="min-h-[150px]"
           />
         ) : (
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground leading-relaxed">
             {company.metadata?.description || "No description available."}
           </p>
         )}
