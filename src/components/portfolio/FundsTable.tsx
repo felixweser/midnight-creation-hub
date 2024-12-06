@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ArrowUpRight } from "lucide-react";
+import { format } from "date-fns";
 
 interface Fund {
   fund_id: string;
@@ -15,6 +16,8 @@ interface Fund {
   vintage_year: number;
   fund_size: number;
   status: string;
+  currency: string;
+  investment_period_end: string | null;
 }
 
 interface FundsTableProps {
@@ -40,6 +43,7 @@ export function FundsTable({ funds, isLoading }: FundsTableProps) {
                 <TableHead>Fund Name</TableHead>
                 <TableHead>Vintage Year</TableHead>
                 <TableHead>Fund Size</TableHead>
+                <TableHead>Investment Period End</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -49,7 +53,14 @@ export function FundsTable({ funds, isLoading }: FundsTableProps) {
                 <TableRow key={fund.fund_id}>
                   <TableCell className="font-medium">{fund.name}</TableCell>
                   <TableCell>{fund.vintage_year}</TableCell>
-                  <TableCell>${fund.fund_size?.toLocaleString()}</TableCell>
+                  <TableCell>
+                    {fund.fund_size?.toLocaleString()} {fund.currency}
+                  </TableCell>
+                  <TableCell>
+                    {fund.investment_period_end
+                      ? format(new Date(fund.investment_period_end), "MMM d, yyyy")
+                      : "-"}
+                  </TableCell>
                   <TableCell>
                     <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ring-green-600/20 bg-green-50/10 text-green-400">
                       {fund.status}

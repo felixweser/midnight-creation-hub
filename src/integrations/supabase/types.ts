@@ -182,8 +182,10 @@ export type Database = {
       funds: {
         Row: {
           created_at: string
+          currency: string | null
           fund_id: string
           fund_size: number | null
+          investment_period_end: string | null
           name: string
           organization_id: string
           status: string | null
@@ -192,8 +194,10 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          currency?: string | null
           fund_id?: string
           fund_size?: number | null
+          investment_period_end?: string | null
           name: string
           organization_id: string
           status?: string | null
@@ -202,8 +206,10 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          currency?: string | null
           fund_id?: string
           fund_size?: number | null
+          investment_period_end?: string | null
           name?: string
           organization_id?: string
           status?: string | null
