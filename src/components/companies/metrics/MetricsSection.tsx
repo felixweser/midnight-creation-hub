@@ -59,31 +59,33 @@ export function MetricsSection({ company, isEditing }: MetricsSectionProps) {
             <CardTitle>Ownership Structure</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[200px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={valuationData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {valuationData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value) => `${value}%`} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="text-center mt-4">
+            <div className="h-[200px] flex flex-col items-center">
+              <div className="h-[160px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={valuationData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {valuationData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => `${value}%`} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="text-center mt-2 space-y-1">
                 <p className="text-2xl font-bold text-primary">{sharesOwnedPercentage}%</p>
                 <p className="text-sm text-muted-foreground">Ownership Stake</p>
-                <p className="text-sm font-medium mt-1">{formatCurrency(stakeValue)}</p>
-                <p className="text-xs text-muted-foreground mt-1">of {formatCurrency(valuationAmount)} valuation</p>
+                <p className="text-sm font-medium">{formatCurrency(stakeValue)}</p>
+                <p className="text-xs text-muted-foreground">of {formatCurrency(valuationAmount)} valuation</p>
               </div>
             </div>
           </CardContent>
