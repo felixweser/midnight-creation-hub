@@ -14,11 +14,12 @@ interface CompanyMetricsProps {
 
 export function CompanyMetrics({ company, isEditing = false }: CompanyMetricsProps) {
   const { toast } = useToast();
-  const { metricsHistory, isLoading, updateMetrics, isUpdating } = useCompanyMetrics(company);
+  const { metricsHistory, latestInvestment, isLoading, updateMetrics, isUpdating } = useCompanyMetrics(company);
   const latestMetrics = metricsHistory?.[metricsHistory.length - 1];
-  const [editedMetrics, setEditedMetrics] = useState<Partial<CompanyMetricsHistory>>(
-    latestMetrics || {}
-  );
+  const [editedMetrics, setEditedMetrics] = useState<Partial<CompanyMetricsHistory>>({
+    ...latestMetrics,
+    post_money_valuation: latestMetrics?.post_money_valuation || latestInvestment?.valuation,
+  });
 
   const handleMetricChange = (field: keyof CompanyMetricsHistory, value: string) => {
     console.log('Updating metric:', field, value);
@@ -50,10 +51,16 @@ export function CompanyMetrics({ company, isEditing = false }: CompanyMetricsPro
     return <Skeleton className="h-[400px]" />;
   }
 
+  // Combine latest metrics with investment valuation
+  const displayMetrics = {
+    ...latestMetrics,
+    post_money_valuation: latestMetrics?.post_money_valuation || latestInvestment?.valuation,
+  };
+
   return (
     <div className="space-y-6">
       <MetricsGrid
-        metrics={latestMetrics || {}}
+        metrics={displayMetrics}
         editedMetrics={editedMetrics}
         isEditing={isEditing}
         onMetricChange={handleMetricChange}

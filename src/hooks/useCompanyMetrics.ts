@@ -7,7 +7,7 @@ export function useCompanyMetrics(company: PortfolioCompany) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: metricsHistory, isLoading, refetch } = useQuery({
+  const { data: metricsHistory, isLoading: metricsLoading } = useQuery({
     queryKey: ["company-metrics", company.company_id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -21,6 +21,23 @@ export function useCompanyMetrics(company: PortfolioCompany) {
     },
   });
 
+  // Add query for latest investment valuation
+  const { data: latestInvestment, isLoading: investmentLoading } = useQuery({
+    queryKey: ["company-investment", company.company_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("investments")
+        .select("*")
+        .eq("company_id", company.company_id)
+        .order("investment_date", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error && error.code !== 'PGRST116') throw error; // PGRST116 is the "no rows returned" error
+      return data;
+    },
+  });
+
   const updateMetricsMutation = useMutation({
     mutationFn: async (newMetrics: Partial<CompanyMetricsHistory>) => {
       const { id, ...metricsToUpdate } = newMetrics;
@@ -29,6 +46,8 @@ export function useCompanyMetrics(company: PortfolioCompany) {
         ...metricsToUpdate,
         company_id: company.company_id,
         metric_date: new Date().toISOString().split('T')[0],
+        // Use the latest investment valuation if available
+        post_money_valuation: metricsToUpdate.post_money_valuation || latestInvestment?.valuation,
       };
 
       console.log('Inserting metrics:', metricsData);
@@ -61,9 +80,9 @@ export function useCompanyMetrics(company: PortfolioCompany) {
 
   return {
     metricsHistory,
-    isLoading,
+    latestInvestment,
+    isLoading: metricsLoading || investmentLoading,
     updateMetrics: updateMetricsMutation.mutate,
     isUpdating: updateMetricsMutation.isPending,
-    refetch
   };
 }
