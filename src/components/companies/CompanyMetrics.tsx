@@ -19,6 +19,7 @@ export function CompanyMetrics({ company, isEditing = false }: CompanyMetricsPro
   const [editedMetrics, setEditedMetrics] = useState<Partial<CompanyMetricsHistory>>({
     ...latestMetrics,
     post_money_valuation: latestMetrics?.post_money_valuation || latestInvestment?.valuation,
+    shares_owned: latestMetrics?.shares_owned || latestInvestment?.ownership_percentage,
   });
 
   const handleMetricChange = (field: keyof CompanyMetricsHistory, value: string) => {
@@ -51,10 +52,11 @@ export function CompanyMetrics({ company, isEditing = false }: CompanyMetricsPro
     return <Skeleton className="h-[400px]" />;
   }
 
-  // Combine latest metrics with investment valuation
+  // Combine latest metrics with investment valuation and ownership
   const displayMetrics = {
     ...latestMetrics,
     post_money_valuation: latestMetrics?.post_money_valuation || latestInvestment?.valuation,
+    shares_owned: latestMetrics?.shares_owned || latestInvestment?.ownership_percentage,
   };
 
   return (
