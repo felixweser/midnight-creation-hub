@@ -17,12 +17,12 @@ const items = [
     icon: Home,
   },
   {
-    title: "Companies",
+    title: "Portfolio",
     url: "/dashboard/companies",
     icon: Building,
   },
   {
-    title: "Team",
+    title: "Team Members",
     url: "/dashboard/team",
     icon: Users,
   },
