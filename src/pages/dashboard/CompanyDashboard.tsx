@@ -10,6 +10,15 @@ import { CompanyStats } from "@/components/companies/CompanyStats";
 import { Container } from "@/components/Container";
 import { MetricsSection } from "@/components/companies/metrics/MetricsSection";
 import type { PortfolioCompany } from "@/integrations/supabase/types/companies";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Link } from "react-router-dom";
 
 export default function CompanyDashboard() {
   const { companyId } = useParams();
@@ -118,6 +127,20 @@ export default function CompanyDashboard() {
 
   return (
     <Container className="space-y-8 py-8">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to="/dashboard/companies">Companies</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{company.name}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <div className="space-y-6">
         <CompanyHeader
           name={company.name}
