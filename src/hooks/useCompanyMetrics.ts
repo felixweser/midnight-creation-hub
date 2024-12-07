@@ -7,7 +7,7 @@ export function useCompanyMetrics(company: PortfolioCompany) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: metricsHistory, isLoading: metricsLoading } = useQuery({
+  const { data: metricsHistory, isLoading: metricsLoading, refetch } = useQuery({
     queryKey: ["company-metrics", company.company_id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -84,5 +84,6 @@ export function useCompanyMetrics(company: PortfolioCompany) {
     isLoading: metricsLoading || investmentLoading,
     updateMetrics: updateMetricsMutation.mutate,
     isUpdating: updateMetricsMutation.isPending,
+    refetch
   };
 }
