@@ -21,7 +21,7 @@ export function useCompanyMetrics(company: PortfolioCompany) {
     },
   });
 
-  // Add query for latest investment valuation
+  // Add query for latest investment valuation and ownership
   const { data: latestInvestment, isLoading: investmentLoading } = useQuery({
     queryKey: ["company-investment", company.company_id],
     queryFn: async () => {
@@ -46,8 +46,9 @@ export function useCompanyMetrics(company: PortfolioCompany) {
         ...metricsToUpdate,
         company_id: company.company_id,
         metric_date: new Date().toISOString().split('T')[0],
-        // Use the latest investment valuation if available
+        // Use the latest investment valuation and ownership if available
         post_money_valuation: metricsToUpdate.post_money_valuation || latestInvestment?.valuation,
+        shares_owned: metricsToUpdate.shares_owned || latestInvestment?.ownership_percentage,
       };
 
       console.log('Inserting metrics:', metricsData);
